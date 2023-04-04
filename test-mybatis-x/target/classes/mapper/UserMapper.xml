@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javastudy.testmybatisx.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.javastudy.testmybatisx.pojo.User">
+        <result property="uid" column="uid" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uid,user_name,age,
+        email,is_delete
+    </sql>
+    <insert id="insertSelective">
+        insert into tb_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid != null">uid,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="age != null">age,</if>
+            <if test="email != null">email,</if>
+            <if test="isDelete != null">is_delete,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid != null">#{uid,jdbcType=BIGINT},</if>
+            <if test="userName != null">#{userName,jdbcType=VARCHAR},</if>
+            <if test="age != null">#{age,jdbcType=INTEGER},</if>
+            <if test="email != null">#{email,jdbcType=VARCHAR},</if>
+            <if test="isDelete != null">#{isDelete,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+    <delete id="deleteByUidAndUserName">
+        delete
+        from tb_user
+        where uid = #{uid,jdbcType=NUMERIC}
+          AND user_name = #{userName,jdbcType=VARCHAR}
+    </delete>
+    <update id="updateAgeAndUserNameByUid">
+        update tb_user
+        set age       = #{age,jdbcType=NUMERIC},
+            user_name = #{userName,jdbcType=VARCHAR}
+        where uid = #{uid,jdbcType=NUMERIC}
+    </update>
+    <select id="selectAgeAndUserNameByAgeBetween" resultMap="BaseResultMap">
+        select age, user_name
+        from tb_user
+        where age between #{beginAge,jdbcType=INTEGER} and #{endAge,jdbcType=INTEGER}
+    </select>
+    <select id="selectAllOrderByAgeDesc" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_user
+        order by age desc
+    </select>
+</mapper>
